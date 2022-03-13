@@ -18,14 +18,28 @@ function App() {
         }
 
         return curentGrid;
+    };
+
+    const generateColor = () => {
+        const curentGrid = [];
+        for (let i = 0; i < rowsNumber; i++) {
+            const row = [];
+            for (let j = 0; j < columnsNumber; j++) {
+                row.push('grey');
+            }
+            curentGrid.push(row);
+        }
+
+        return curentGrid;
     }
 
     const [grid, setGrid] = useState(() => generateGrid());
+    const [gridColor, setGridColor] = useState(() => {
+        return generateColor();
+    });
     const [starFunction, seetStartFunction] = useState('Start');
     const running = useRef(starFunction);
     running.current = starFunction;
-
-
 
 
     const runSumilation = () => {
@@ -77,6 +91,11 @@ function App() {
                         currentState[i][j] = 1;
 
                         setGrid(currentState);
+                        setGridColor(() => {
+                            let curentColor = [...gridColor]
+                            curentColor[i][j] = 'green';
+                            return curentColor;
+                        });
                     }
                 } else if (currentGrid[i][j] === 1) {
                     if (neighbours !== 2 && neighbours !== 3) {
@@ -84,7 +103,19 @@ function App() {
                         currentState[i][j] = 0;
 
                         setGrid(currentState);
-                    }
+
+                        setGridColor(() => {
+                            let curentColor = [...gridColor]
+                            curentColor[i][j] = 'red';
+                            return curentColor;
+                        });
+                    } else {
+                        setGridColor(() => {
+                            let curentColor = [...gridColor]
+                            curentColor[i][j] = 'yellow';
+                            return curentColor;
+                        });
+                    } 
                 }
             }
         }
@@ -103,7 +134,7 @@ function App() {
                                 {
                                     row.map((column, j) => {
                                         return (
-                                            <div className="column"
+                                            <div className={`column ${gridColor[i][j]}`}
                                                 // key={ `${i}-${j}` }
                                                 key={ j }
                                                 style={ {
@@ -137,6 +168,7 @@ function App() {
                 } }> { starFunction }</button>
                 <button onClick={ () => {
                     seetStartFunction('Start');
+                    setGridColor(generateColor());
                     setGrid(generateGrid());
                 } }>Clear</button>
             </section>
